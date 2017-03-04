@@ -141,7 +141,10 @@ def make_map(data):
         else:
             for body in snake["coords"]:
                 wall_coords.append(body)
-        
+    
+    for food in data["food"]:
+        wall_coords.append(food)
+
 
     for wall in wall_coords:
         y = wall[0]
