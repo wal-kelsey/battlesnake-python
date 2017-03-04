@@ -1,5 +1,6 @@
 import bottle
 import os
+import random
 
 
 @bottle.route('/static/<path:path>')
@@ -7,24 +8,22 @@ def static(path):
     return bottle.static_file(path, root='static/')
 
 
-@bottle.get('/')
-def index():
-    head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
-
-    return {
-        'color': '#FF0000',
-        'name': 'Groot'
-    }
-
-
 @bottle.post('/start')
 def start():
     data = bottle.request.json
+    game_id = data['game_id']
+    board_width = data['width']
+    board_height = data['height']
+
+    head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
     # TODO: Do things with data
 
     return {
-        'taunt': 'I am groot!'
+        'color': '#00FF00',
+        'taunt': 'I am Groot!',
+        'head_url': head_url,
+        'name': 'Groot'
     }
 
 
@@ -33,21 +32,11 @@ def move():
     data = bottle.request.json
 
     # TODO: Do things with data
+    directions = ['up', 'down', 'left', 'right']
 
     return {
-        'move': 'south',
-        'taunt': 'battlesnake-python!'
-    }
-
-
-@bottle.post('/end')
-def end():
-    data = bottle.request.json
-
-    # TODO: Do things with data
-
-    return {
-        'taunt': 'I am groot!'
+        'move': random.choice(directions),
+        'taunt': 'I am Groot!'
     }
 
 
