@@ -53,7 +53,6 @@ def move():
         if x != (data["width"]-1) and heatMap[y][x+1] == 0:
             move = 'right'
 
-
     return {
         'move': move,
         'taunt': 'I am Groot!'
