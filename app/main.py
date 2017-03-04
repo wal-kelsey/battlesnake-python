@@ -9,10 +9,7 @@ def static(path):
 
 @bottle.get('/')
 def index():
-    head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg' % (
-        bottle.request.urlparts.scheme,
-        bottle.request.urlparts.netloc
-    )
+    head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
     return {
         'color': '#ffffff',
