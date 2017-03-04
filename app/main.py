@@ -53,9 +53,6 @@ def get_move(data):
 
 def get_groot(data):
     for snake in data["snakes"]:
-        print("#####")
-        print(data["you"])
-        print("#####")
         if snake["id"] == data["you"]:
             return snake
 
@@ -144,6 +141,22 @@ def make_map(data):
         else:
             for body in snake["coords"]:
                 wall_coords.append(body)
+        
+
+    for wall in wall_coords:
+        y = wall[0]
+        x = wall[1]
+
+        map[y][x] = 1
+
+    # Make edge scary
+    for y in range(data["height"]):
+        for x in range(data["width"]):
+            if x == 0 or x == (data["width"]-1):
+                map[y][x] += 1
+            if y == 0 or y == (data["height"]-1):
+                map[y][x] += 1
+
     print(map)
 
     return map
