@@ -17,8 +17,6 @@ def start():
 
     head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
-    # TODO: Do things with data
-
     return {
         'color': '#00FF00',
         'taunt': 'I am Groot!',
@@ -31,11 +29,30 @@ def start():
 def move():
     data = bottle.request.json
 
-    # TODO: Do things with data
-    directions = ['up', 'down', 'left', 'right']
-
-
     move = get_move(data)
+
+    #Emergancy move if move is None
+    if (move is None):
+        print("MOVE IS NONE!!!!!!!!!")
+        map = make_map(data)
+        groot = get_groot(data)
+        head = groot['coords'][0]
+
+        x = head[0]
+        y = head[1]
+
+        if y != 0 and heatMap[y-1][x] = 0:
+            move = 'up'
+
+        if y != (data["height"]-1) and heatMap[y+1][x] += 1:
+            move = 'down'
+
+        if x != 0 and heatMap[y][x-1] += 1:
+            move = 'left'
+
+        if x != (data["width"]-1) and heatMap[y][x+1] += 1:
+            move = 'right'
+
 
     return {
         'move': move,
@@ -68,45 +85,6 @@ def default(data):
 
 
 
-
-# def evaluate(coord, map):
-#     value = 0
-
-#     if coord[1] == 0:
-#         north = 100
-#     else:
-#         north = map[coord[1]-1][coord[0]]
-
-#     if coord[1] == (len(map)-1):
-#         south = 100
-#     else:
-#         south = heatMap[coord[1]+1][coord[0]]
-
-#     if coord[0] == (len(heatMap[0])-1):
-#         east = 100
-#     else:
-#         east = heatMap[coord[1]][coord[0]+1]
-
-#     if coord[0] == 0:
-#         west = 100
-#     else:
-#         west = heatMap[coord[1]][coord[0]-1]
-
-#     values = [north, south, east, west]
-
-#     minimum = min(values)
-
-#     if north == minimum:
-#         return [coord[0],coord[1]-1]
-
-#     if south == minimum:
-#         return [coord[0],coord[1]+1]
-
-#     if east == minimum:
-#         return [coord[0]+1,coord[1]]
-
-#     if west == minimum:
-#         return [coord[0]-1,coord[1]]
 
 def hungry(data):
 
@@ -150,11 +128,11 @@ def get_distance(our_head, food_coords):
     return [ x_distance + y_distance , food_coords]
 
 
-def is_food_safe(food_coords, threshold, heat_map):
+def is_food_safe(food_coords, threshold, map):
     #TODO: ADD TO THIS!!!!!!!!!!!!!!!!!!!!!
 
 
-    return heat_map[food_coords[0]][food_coords[1]] <= threshold
+    return map[food_coords[0]][food_coords[1]] <= threshold
 
 
 def make_map(data):
