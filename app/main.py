@@ -41,16 +41,16 @@ def move():
         x = head[0]
         y = head[1]
 
-        if y != 0 and heatMap[y-1][x] = 0:
+        if y != 0 and heatMap[y-1][x] == 0:
             move = 'up'
 
-        if y != (data["height"]-1) and heatMap[y+1][x] += 1:
+        if y != (data["height"]-1) and heatMap[y+1][x] == 0:
             move = 'down'
 
-        if x != 0 and heatMap[y][x-1] += 1:
+        if x != 0 and heatMap[y][x-1] == 0:
             move = 'left'
 
-        if x != (data["width"]-1) and heatMap[y][x+1] += 1:
+        if x != (data["width"]-1) and heatMap[y][x+1] == 0:
             move = 'right'
 
 
