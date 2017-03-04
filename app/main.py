@@ -157,8 +157,8 @@ def make_map(data):
         wall_coords.append(food)
 
     for wall in wall_coords:
-        y = wall[0]
-        x = wall[1]
+        x = wall[0]
+        y = wall[1]
 
         map[x][y] = 1
 
@@ -372,6 +372,8 @@ class AStar(object):
                         heapq.heappush(self.opened, (adj_cell.f, adj_cell))
 
 
+
+# def get_danger_level(data, point):
 
 
 
