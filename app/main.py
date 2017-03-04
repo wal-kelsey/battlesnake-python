@@ -160,7 +160,7 @@ def make_map(data):
         x = wall[0]
         y = wall[1]
 
-        map[x][y] = 1
+        map[y][x] = 1
 
     # Make edge scary
     for y in range(data["height"]):
