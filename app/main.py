@@ -13,7 +13,8 @@ def index():
 
     return {
         'color': '#ffffff',
-        'head': head_url
+        'head': head_url,
+        'name': 'Groot'
     }
 
 
