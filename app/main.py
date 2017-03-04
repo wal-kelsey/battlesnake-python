@@ -12,8 +12,8 @@ def index():
     head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
     return {
-        'color': '#ffffff',
-        'head': head_url,
+        'color': '#FF0000',
+        'head_url': head_url,
         'name': 'Groot'
     }
 
