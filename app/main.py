@@ -53,6 +53,9 @@ def get_move(data):
 
 def get_groot(data):
     for snake in data["snakes"]:
+        print("#####")
+        print(data["you"])
+        print("#####")
         if snake["id"] == data["you"]:
             return snake
 
@@ -143,7 +146,7 @@ def make_map(data):
                 wall_coords.append(body)
     print(map)
 
-    return heatMap
+    return map
 
 
 
