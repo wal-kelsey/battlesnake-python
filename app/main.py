@@ -31,7 +31,8 @@ def move():
 
     move = get_move(data)
 
-    #Emergancy move if move is None
+
+    #Emergency move if move is None
     if (move is None):
         print("MOVE IS NONE!!!!!!!!!")
         map = make_map(data)
@@ -78,9 +79,7 @@ def default(data):
 
     map = make_map(data)
 
-
-
-    return "down"
+    return None
 
 
 
