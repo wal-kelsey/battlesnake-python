@@ -121,7 +121,7 @@ def hungry(data):
     if not len(food):
         return default(data)
 
-    return get_move(groot["coords"][0], food, data)
+    return get_astar_move(groot["coords"][0], food, data)
 
 
 def food_eval(map, data_food, our_head):
@@ -200,7 +200,7 @@ def make_map(data):
 
 
 
-def get_move(start, goal, data):
+def get_astar_move(start, goal, data):
     wall_coords     = []
     start           = tuple(start)
     goal            = tuple(goal)
