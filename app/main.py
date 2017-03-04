@@ -42,17 +42,37 @@ def move():
         x = head[0]
         y = head[1]
 
+        #Try and find safe move
         if y != 0 and heatMap[y-1][x] == 0:
-            move = 'up'
+            if y != 1 and heatMap[y-2][x] == 0:
+                move = 'up'
 
         if y != (data["height"]-1) and heatMap[y+1][x] == 0:
-            move = 'down'
+            if y != (data["height"]-2) and heatMap[y+2][x] == 0:
+                move = 'down'
 
         if x != 0 and heatMap[y][x-1] == 0:
-            move = 'left'
+            if x != 1 and heatMap[y][x-2] == 0:
+                move = 'left'
 
         if x != (data["width"]-1) and heatMap[y][x+1] == 0:
-            move = 'right'
+            if x != (data["width"]-2) and heatMap[y][x+2] == 0:
+                move = 'right'
+
+
+        #Just find a move
+        if (move == None):
+            if y != 0 and heatMap[y-1][x] == 0:
+                move = 'up'
+
+            if y != (data["height"]-1) and heatMap[y+1][x] == 0:
+                move = 'down'
+
+            if x != 0 and heatMap[y][x-1] == 0:
+                move = 'left'
+
+            if x != (data["width"]-1) and heatMap[y][x+1] == 0:
+                move = 'right'
 
     return {
         'move': move,
