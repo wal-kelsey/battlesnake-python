@@ -18,7 +18,7 @@ def start():
     head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
     return {
-        'color': '#765D44',
+        'color': '#002800',
         'taunt': 'I am Groot!',
         'head_url': head_url,
         'name': 'Groot',
