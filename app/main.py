@@ -31,7 +31,6 @@ def move():
 
     move = get_move(data)
 
-
     #Emergency move if move is None
     if (move is None):
         print("MOVE IS NONE!!!!!!!!!")
@@ -82,11 +81,10 @@ def move():
 
 def get_move(data):
     groot = get_groot(data)
-    return hungry(data)
-    # if groot["health"] < 25:
-    #     return hungry(data)
-    # else:
-    #     return default(data)
+    if groot["health"] < 25:
+        return hungry(data)
+    else:
+        return default(data)
 
 def get_groot(data):
     for snake in data["snakes"]:
@@ -95,27 +93,138 @@ def get_groot(data):
 
 
 def default(data):
-    groot = get_groot(data)
-
     map = make_map(data)
 
-        #     #Try and find safe move
-        # if y != 0 and map[y-1][x] == 0:
-        #     if y != 1 and map[y-2][x] == 0:
-        #         move = 'up'
+    groot = get_groot(data)
+    head = groot['coords'][0]
 
-        # if y != (data["height"]-1) and map[y+1][x] == 0:
-        #     if y != (data["height"]-2) and map[y+2][x] == 0:
-        #         move = 'down'
+    x = head[0]
+    y = head[1]
+    
+    dangersLeft = 0
+    dangersRight = 0
+    dangersUp = 0
+    dangersDown = 0
 
-        # if x != 0 and map[y][x-1] == 0:
-        #     if x != 1 and map[y][x-2] == 0:
-        #         move = 'left'
+    if (len(groot['coords']) > 1):
+        firstBody = groot['coords'][1]
+        xfirstBody = firstBody[0]
+        yfirstBody = firstBody[1]
+        
+        if y - 1 == yfirstBody:
+            dangersUp = 100
 
-        # if x != (data["width"]-1) and map[y][x+1] == 0:
-        #     if x != (data["width"]-2) and map[y][x+2] == 0:
-        #         move = 'right'
+        if y + 1 == yfirstBody:
+            dangersDown = 100
 
+        if x - 1 == xfirstBody:
+            dangersLeft = 100
+
+        if x + 1 == xfirstBody:
+            dangersRight = 100
+
+    xtemp = x
+    ytemp = y
+
+
+    for i in range(1, 4):
+        for j in range(-1, 2):
+            xtemp = x - i
+            ytemp = y - j
+
+            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
+                dangersLeft += 2
+            else:
+                if map[ytemp][xtemp] != 0:
+                    dangersLeft += map[ytemp][xtemp]
+
+    for i in range(1, 4):
+        for j in range(-1, 2):
+            xtemp = x + i
+            ytemp = y - j
+
+            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
+                dangersRight += 2
+            else:
+                if map[ytemp][xtemp] != 0:
+                    dangersRight += map[ytemp][xtemp]
+
+    for i in range(-1, 2):
+        for j in range(1, 4):
+            xtemp = x - i
+            ytemp = y - j
+
+            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
+                dangersUp += 2
+            else:
+                if map[ytemp][xtemp] != 0:
+                    dangersUp += map[ytemp][xtemp]
+
+    for i in range(-1, 2):
+        for j in range(1, 4):
+            xtemp = x - i
+            ytemp = y + j
+
+            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
+                dangersDown += 2
+            else:
+                if map[ytemp][xtemp] != 0:
+                    dangersDown += map[ytemp][xtemp]
+
+
+    move = None
+
+    upTuple = (dangersUp, 'up')
+    downTuple = (dangersDown, 'down')
+    leftTuple = (dangersLeft, 'left')
+    rightTuple = (dangersRight, 'right')
+
+    values = [upTuple, downTuple, rightTuple, leftTuple]
+
+    sorted_by_first = sorted(values, key=lambda tup: tup[0])
+
+    print("sorted_by_first:")
+    print(sorted_by_first)
+
+    for option in sorted_by_first:
+        if option[1] == 'up':
+            if y == 0:
+                continue
+
+            ytemp = y - 1
+            if (map[ytemp][x] >= 2):
+                continue
+            return 'up'
+
+        if option[1] == 'down':
+            if y == data["height"] - 1:
+                continue
+
+            ytemp = y + 1
+            if (map[ytemp][x] >= 2):
+                continue
+            return 'down'
+
+        if option[1] == 'left':
+            if x == 0:
+                continue
+
+            xtemp = x - 1
+            if (map[y][xtemp] >= 2):
+                continue
+            return 'left'
+
+        if option[1] == 'right':
+            if x == data["width"] - 1:
+                continue
+
+            xtemp = x + 1
+            if (map[y][xtemp] >= 2):
+                continue
+            return 'right'
+
+
+    print("IF WE GET HERE, THIS IS BADDDD")
     return None
 
 
@@ -188,6 +297,13 @@ def make_map(data):
         else:
             for body in snake["coords"]:
                 wall_coords.append(body)
+
+
+    for wall in wall_coords:
+        x = wall[0]
+        y = wall[1]
+
+        map[y][x] = 1
     
     for food in data["food"]:
         wall_coords.append(food)
@@ -196,7 +312,7 @@ def make_map(data):
         x = wall[0]
         y = wall[1]
 
-        map[y][x] = 1
+        map[y][x] += 1
 
     # Make edge scary
     for y in range(data["height"]):
