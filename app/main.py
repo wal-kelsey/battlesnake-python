@@ -133,7 +133,7 @@ def default(data):
             ytemp = y - j
 
             if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersLeft += 2
+                dangersLeft += 0.5
             else:
                 if map[ytemp][xtemp] != 0:
                     dangersLeft += map[ytemp][xtemp]
@@ -144,7 +144,7 @@ def default(data):
             ytemp = y - j
 
             if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersRight += 2
+                dangersRight += 0.5
             else:
                 if map[ytemp][xtemp] != 0:
                     dangersRight += map[ytemp][xtemp]
@@ -155,7 +155,7 @@ def default(data):
             ytemp = y - j
 
             if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersUp += 2
+                dangersUp += 0.5
             else:
                 if map[ytemp][xtemp] != 0:
                     dangersUp += map[ytemp][xtemp]
@@ -166,7 +166,7 @@ def default(data):
             ytemp = y + j
 
             if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersDown += 2
+                dangersDown += 0.5
             else:
                 if map[ytemp][xtemp] != 0:
                     dangersDown += map[ytemp][xtemp]
