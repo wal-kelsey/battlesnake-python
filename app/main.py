@@ -290,11 +290,16 @@ def make_map(data, excludeFood):
 
 
     for snake in data["snakes"]:
+        head_counter = 0
         if snake["id"] == data["you"]:
             for body in snake["coords"][1:]:
                 wall_coords.append(body)
         else:
             for body in snake["coords"]:
+                if (head_counter == 0):
+                    wall_coords.append(body)
+                    wall_coords.append(body)
+                    wall_coords.append(body)
                 wall_coords.append(body)
 
 
