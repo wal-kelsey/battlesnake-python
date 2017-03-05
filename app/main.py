@@ -305,7 +305,7 @@ def make_map(data, excludeFood):
 
         map[y][x] = 1
     
-    if (!excludeFood):
+    if (not excludeFood):
         for food in data["food"]:
             wall_coords.append(food)
 
