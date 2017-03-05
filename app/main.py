@@ -93,7 +93,7 @@ def get_groot(data):
 
 
 def default(data):
-    map = make_map(data)
+    map = make_map(data, False)
 
     groot = get_groot(data)
     head = groot['coords'][0]
