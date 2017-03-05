@@ -273,10 +273,9 @@ def get_distance(our_head, food_coords):
 
 
 def is_food_safe(food_coords, threshold, map):
-    #TODO: ADD TO THIS!!!!!!!!!!!!!!!!!!!!!
+    #TODO: Without the heatmap, this is pointless
 
-
-    return map[food_coords[0]][food_coords[1]] <= threshold
+    return map[food_coords[1]][food_coords[0]] <= threshold
 
 
 def make_map(data, excludeFood):
@@ -319,9 +318,9 @@ def make_map(data, excludeFood):
     for y in range(data["height"]):
         for x in range(data["width"]):
             if x == 0 or x == (data["width"]-1):
-                map[y][x] += 1
+                map[y][x] += 0.5
             if y == 0 or y == (data["height"]-1):
-                map[y][x] += 1
+                map[y][x] += 0.5
 
     print(map)
 
