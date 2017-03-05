@@ -34,7 +34,7 @@ def move():
     #Emergency move if move is None
     if (move is None):
         print("MOVE IS NONE!!!!!!!!!")
-        map = make_map(data)
+        map = make_map(data, True)
         groot = get_groot(data)
         head = groot['coords'][0]
 
@@ -81,7 +81,7 @@ def move():
 
 def get_move(data):
     groot = get_groot(data)
-    if groot["health_points"] < 30:
+    if groot["health_points"] < 40:
         return hungry(data)
     else:
         return default(data)
@@ -233,7 +233,7 @@ def default(data):
 def hungry(data):
 
     groot = get_groot(data)
-    map = make_map(data)
+    map = make_map(data, True)
 
     if not len(data["food"]):
         return default(data)
@@ -279,7 +279,7 @@ def is_food_safe(food_coords, threshold, map):
     return map[food_coords[0]][food_coords[1]] <= threshold
 
 
-def make_map(data):
+def make_map(data, excludeFood):
     wall_coords = []
     map = []
 
@@ -305,8 +305,9 @@ def make_map(data):
 
         map[y][x] = 1
     
-    for food in data["food"]:
-        wall_coords.append(food)
+    if (!excludeFood):
+        for food in data["food"]:
+            wall_coords.append(food)
 
     for wall in wall_coords:
         x = wall[0]
