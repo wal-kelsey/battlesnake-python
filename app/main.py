@@ -18,10 +18,12 @@ def start():
     head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
     return {
-        'color': '#00FF00',
+        'color': '#765D44',
         'taunt': 'I am Groot!',
         'head_url': head_url,
-        'name': 'Groot'
+        'name': 'Groot',
+        'head_type' : 'shades',
+        'tail_type' : 'round-bum'
     }
 
 
@@ -73,9 +75,13 @@ def move():
             if x != (data["width"]-1) and map[y][x+1] == 0:
                 move = 'right'
 
+    taunt = 'I am Gro'
+    for x in range(data['turn'] % 8):
+        taunt += 'o'
+    taunt += 'ot!'
     return {
         'move': move,
-        'taunt': 'I am Groot!'
+        'taunt': taunt
     }
 
 
