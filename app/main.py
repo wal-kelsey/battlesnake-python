@@ -38,10 +38,10 @@ def move():
         print("MOVE IS NONE!!!!!!!!!")
         map = make_map(data, True)
         groot = get_groot(data)
-        head = groot['coords'][0]
+        head = groot["body"]["data"][0]
 
-        x = head[0]
-        y = head[1]
+        x = head["x"]
+        y = head["y"]
 
         #Try and find safe move
         if y != 0 and map[y-1][x] == 0:
@@ -80,42 +80,39 @@ def move():
         taunt += 'o'
     taunt += 'ot!'
     return {
-        'move': move,
-        'taunt': taunt
+        'move': move
     }
 
 
 def get_move(data):
     groot = get_groot(data)
-    if groot["health_points"] < 40:
+    if groot["health"] < 40:
         return hungry(data)
     else:
         return default(data)
 
 def get_groot(data):
-    for snake in data["snakes"]:
-        if snake["id"] == data["you"]:
-            return snake
+    return data["you"]
 
 
 def default(data):
     map = make_map(data, False)
 
     groot = get_groot(data)
-    head = groot['coords'][0]
+    head = groot["body"]["data"][0]
 
-    x = head[0]
-    y = head[1]
+    x = head["x"]
+    y = head["y"]
     
     dangersLeft = 0
     dangersRight = 0
     dangersUp = 0
     dangersDown = 0
 
-    if (len(groot['coords']) > 1):
-        firstBody = groot['coords'][1]
-        xfirstBody = firstBody[0]
-        yfirstBody = firstBody[1]
+    if (len(groot["body"]["data"]) > 1):
+        firstBody = groot["body"]["data"][1]
+        xfirstBody = firstBody["x"]
+        yfirstBody = firstBody["y"]
         
         if y - 1 == yfirstBody:
             dangersUp = 100
@@ -241,15 +238,15 @@ def hungry(data):
     groot = get_groot(data)
     map = make_map(data, True)
 
-    if not len(data["food"]):
+    if not len(data["food"]["data"]):
         return default(data)
 
-    food = food_eval(map, data["food"], groot["coords"][0])
+    food = food_eval(map, data["food"]["data"], groot["body"]["data"][0])
 
     if not len(food):
         return default(data)
 
-    return get_astar_move(groot["coords"][0], food, data)
+    return get_astar_move(groot["body"]["data"][0], food, data)
 
 
 def food_eval(map, data_food, our_head):
@@ -267,21 +264,21 @@ def food_eval(map, data_food, our_head):
                 return food[1]
         for food in food_distance:
             print food
-            if(is_food_safe(food[1], 3, heat_map)):
+            if(is_food_safe(food[1], 3, map)):
                 return food[1]
         return []
 
 
 def get_distance(our_head, food_coords):
-    x_distance = abs(our_head[0] - food_coords[0])
-    y_distance = abs(our_head[1] - food_coords[1])
+    x_distance = abs(our_head["x"] - food_coords["x"])
+    y_distance = abs(our_head["y"] - food_coords["y"])
     return [ x_distance + y_distance , food_coords]
 
 
 def is_food_safe(food_coords, threshold, map):
     #TODO: Without the heatmap, this is pointless
 
-    return map[food_coords[1]][food_coords[0]] <= threshold
+    return map[food_coords["x"]][food_coords["y"]] <= threshold
 
 
 def make_map(data, excludeFood):
@@ -295,13 +292,13 @@ def make_map(data, excludeFood):
         map.append(row)
 
 
-    for snake in data["snakes"]:
+    for snake in data["snakes"]["data"]:
         head_counter = 0
-        if snake["id"] == data["you"]:
-            for body in snake["coords"][1:]:
+        if snake["id"] == data["you"]["id"]:
+            for body in snake["body"]["data"][1:]:
                 wall_coords.append(body)
         else:
-            for body in snake["coords"]:
+            for body in snake["body"]["data"]:
                 if (head_counter == 0):
                     wall_coords.append(body)
                     wall_coords.append(body)
@@ -310,18 +307,18 @@ def make_map(data, excludeFood):
 
 
     for wall in wall_coords:
-        x = wall[0]
-        y = wall[1]
+        x = wall["x"]
+        y = wall["y"]
 
         map[y][x] = 1
     
     if (not excludeFood):
-        for food in data["food"]:
+        for food in data["food"]["data"]:
             wall_coords.append(food)
 
     for wall in wall_coords:
-        x = wall[0]
-        y = wall[1]
+        x = wall["x"]
+        y = wall["y"]
 
         map[y][x] += 1
 
@@ -341,20 +338,19 @@ def make_map(data, excludeFood):
 
 
 def get_astar_move(start, goal, data):
+    start = (start["x"], start["y"])
+    goal = (goal["x"], goal["y"])
     wall_coords     = []
     start           = tuple(start)
     goal            = tuple(goal)
 
-    for snake in data["snakes"]:
-        if snake["id"] == data['you']:
-            for body in snake["coords"][1:]:
-                wall_coords.append(tuple(body))
+    for snake in data["snakes"]["data"]:
+        if snake["id"] == data["you"]["id"]:
+            for body in snake["body"]["data"][1:]:
+                wall_coords.append((body["x"], body["y"]))
         else:
-            for body in snake["coords"]:
-                wall_coords.append(tuple(body))
-
-    for food in data["food"]:
-        food.append(tuple(food))
+            for body in snake["body"]["data"]:
+                wall_coords.append((body["x"], body["y"]))
 
     print "WALL COORDS"
     print wall_coords
