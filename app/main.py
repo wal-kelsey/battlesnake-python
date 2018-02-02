@@ -86,7 +86,7 @@ def move():
 
 def get_move(data):
     groot = get_groot(data)
-    if groot["health"] < 40:
+    if groot["health"] < 60:
         return hungry(data)
     else:
         return default(data)
