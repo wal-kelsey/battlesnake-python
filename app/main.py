@@ -12,8 +12,6 @@ def static(path):
 def start():
     data = bottle.request.json
     game_id = data['game_id']
-    board_width = data['width']
-    board_height = data['height']
 
     head_url = 'https://img0.etsystatic.com/103/0/11964913/il_340x270.892126004_kfiw.jpg'
 
