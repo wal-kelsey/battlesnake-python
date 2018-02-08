@@ -2,6 +2,7 @@ import bottle
 import os
 import random
 import heapq
+import copy
 
 @bottle.route('/static/<path:path>')
 def static(path):
@@ -84,18 +85,119 @@ def move():
 
 def get_move(data):
     groot = get_groot(data)
+
+    moves = get_possible_moves_from_flood(data)
+    print(moves)
+
     if groot["health"] < 60:
-        return hungry(data)
+        return hungry(data, moves)
     else:
-        return default(data)
+        return default(data, moves)
 
 def get_groot(data):
     return data["you"]
 
+def get_possible_moves_from_flood(data):
+    map = make_flood_map(data)
+    possible_moves = []
+    groot = get_groot(data)
+    head = groot["body"]["data"][0]
 
-def default(data):
+    x = head["x"]
+    y = head["y"]
+
+    if y != 0 and map[y - 1][x] == 0:
+        possible_moves.append({"direction": "up", "count": 0})
+
+    if y != (data["height"] - 1) and map[y + 1][x] == 0:
+        possible_moves.append({"direction": "down", "count": 0})
+
+    if x != 0 and map[y][x - 1] == 0:
+        possible_moves.append({"direction": "left", "count": 0})
+
+    if x != (data["width"] - 1) and map[y][x + 1] == 0:
+        possible_moves.append({"direction": "right", "count": 0})
+
+    # Run flood fill on all possible moves
+    for move in possible_moves:
+        move_coords = get_move_coordinates(head, move["direction"])
+        temp_map = copy.deepcopy(map)
+        filled = []
+        flood_fill(temp_map, move_coords["x"], move_coords["y"], filled)
+        move["count"] = len(filled)
+
+    grootLength = len(groot["body"]["data"])
+    final_moves = []
+    for move in possible_moves:
+        if (move["count"] > grootLength):
+            final_moves.append(move["direction"])
+
+    # If all moves are smaller than our body, return the biggest one
+    if len(final_moves) is 0:
+        sorted_possible_moves = sorted(possible_moves, key=lambda move: move["count"], reverse=True)
+        final_moves.append(sorted_possible_moves[0]["direction"])
+
+    return final_moves
+
+
+
+
+
+def flood_fill(map, x, y, filled):
+    if map[y][x] == 0:
+        # Mark as visited
+        map[y][x] = 1
+        filled.append({'x': x, 'y': y})
+
+        # Check surrounding spots:
+        if x > 0:
+            flood_fill(map, x - 1, y, filled)
+        if x < len(map[y]) - 1:
+            flood_fill(map, x + 1, y, filled)
+        if y > 0:
+            flood_fill(map, x, y - 1, filled)
+        if y < len(map) - 1:
+            flood_fill(map, x, y + 1, filled)
+
+def get_move_coordinates(head, move):
+    x = head["x"]
+    y = head["y"]
+
+    if move == 'left':
+        return {'x': x - 1, 'y': y}
+    if move == 'right':
+        return {'x': x + 1, 'y': y}
+    if move == 'up':
+        return {'x': x, 'y': y - 1}
+    if move == 'down':
+        return {'x': x, 'y': y + 1}
+
+    print("Invalid move passed in to get_move_coordinates")
+
+def make_flood_map(data):
+    wall_coords = []
+    map = []
+
+    for y in range(data["height"]):
+        row = []
+        for j in range(data["width"]):
+            row.append(0)
+        map.append(row)
+
+
+    for snake in data["snakes"]["data"]:
+        # Cut off end of tail, since this will move on the next turn
+        for body in snake["body"]["data"][:-1]:
+            wall_coords.append(body)
+
+    for wall in wall_coords:
+        map[wall["y"]][wall["x"]] = 1
+
+    return map
+
+
+def default(data, flood_fill_moves):
     map = make_map(data, False)
-
     groot = get_groot(data)
     head = groot["body"]["data"][0]
 
@@ -175,16 +277,19 @@ def default(data):
 
     move = None
 
-    upTuple = (dangersUp, 'up')
-    downTuple = (dangersDown, 'down')
-    leftTuple = (dangersLeft, 'left')
-    rightTuple = (dangersRight, 'right')
+    upList = [dangersUp, 'up']
+    downList = [dangersDown, 'down']
+    leftList = [dangersLeft, 'left']
+    rightList = [dangersRight, 'right']
 
-    values = [upTuple, downTuple, rightTuple, leftTuple]
+    values = [upList, downList, leftList, rightList]
 
-    sorted_by_first = sorted(values, key=lambda tup: tup[0])
+    # Add danger to moves not returned by flood fill
+    for value in values:
+        if value[1] not in flood_fill_moves:
+            value[0] += 10
 
-    print("sorted_by_first:")
+    sorted_by_first = sorted(values, key=lambda value: value[0])
     print(sorted_by_first)
 
     for option in sorted_by_first:
@@ -192,36 +297,36 @@ def default(data):
             if y == 0:
                 continue
 
-            ytemp = y - 1
-            if (map[ytemp][x] >= 2):
-                continue
+            # ytemp = y - 1
+            # if (map[ytemp][x] >= 2):
+            #     continue
             return 'up'
 
         if option[1] == 'down':
             if y == data["height"] - 1:
                 continue
 
-            ytemp = y + 1
-            if (map[ytemp][x] >= 2):
-                continue
+            # ytemp = y + 1
+            # if (map[ytemp][x] >= 2):
+            #     continue
             return 'down'
 
         if option[1] == 'left':
             if x == 0:
                 continue
 
-            xtemp = x - 1
-            if (map[y][xtemp] >= 2):
-                continue
+            # xtemp = x - 1
+            # if (map[y][xtemp] >= 2):
+            #     continue
             return 'left'
 
         if option[1] == 'right':
             if x == data["width"] - 1:
                 continue
 
-            xtemp = x + 1
-            if (map[y][xtemp] >= 2):
-                continue
+            # xtemp = x + 1
+            # if (map[y][xtemp] >= 2):
+            #     continue
             return 'right'
 
 
@@ -231,52 +336,36 @@ def default(data):
 
 
 
-def hungry(data):
+def hungry(data, flood_fill_moves):
 
     groot = get_groot(data)
     map = make_map(data, True)
-
     if not len(data["food"]["data"]):
-        return default(data)
+        return default(data, flood_fill_moves)
 
     food = food_eval(map, data["food"]["data"], groot["body"]["data"][0])
-
     if not len(food):
-        return default(data)
+        return default(data, flood_fill_moves)
 
-    return get_astar_move(groot["body"]["data"][0], food, data)
+    move = get_astar_move(groot["body"]["data"][0], food[1], data)
 
+    if move in flood_fill_moves:
+        return move
+    else:
+        return default(data, flood_fill_moves)
 
 def food_eval(map, data_food, our_head):
         food_distance = []
         for food in data_food:
             food_distance.append(get_distance(our_head, food))
         sorted(food_distance)
-        for food in food_distance:
-            print food
-            if(is_food_safe(food[1], 1, map)):
-                return food[1]
-        for food in food_distance:
-            print food
-            if(is_food_safe(food[1], 2, map)):
-                return food[1]
-        for food in food_distance:
-            print food
-            if(is_food_safe(food[1], 3, map)):
-                return food[1]
-        return []
+        return food_distance[0]
 
 
 def get_distance(our_head, food_coords):
     x_distance = abs(our_head["x"] - food_coords["x"])
     y_distance = abs(our_head["y"] - food_coords["y"])
     return [ x_distance + y_distance , food_coords]
-
-
-def is_food_safe(food_coords, threshold, map):
-    #TODO: Without the heatmap, this is pointless
-
-    return map[food_coords["x"]][food_coords["y"]] <= threshold
 
 
 def make_map(data, excludeFood):
@@ -328,8 +417,6 @@ def make_map(data, excludeFood):
             if y == 0 or y == (data["height"]-1):
                 map[y][x] += 0.5
 
-    print(map)
-
     return map
 
 
@@ -350,16 +437,11 @@ def get_astar_move(start, goal, data):
             for body in snake["body"]["data"]:
                 wall_coords.append((body["x"], body["y"]))
 
-    print "WALL COORDS"
-    print wall_coords
-
     a = AStar()
 
     a.init_grid(data["height"],data["width"],wall_coords,start,goal)
 
     solution = a.solve()
-
-    print solution
 
     if solution:
         return convert_direction(start, solution[1])
@@ -371,17 +453,13 @@ def get_astar_move(start, goal, data):
 def convert_direction(start, coord):
 
     if start[0] > coord[0]:
-        print "left"
         return "left"
     elif start[0] < coord[0]:
-        print "right"
         return "right"
 
     if start[1] > coord[1]:
-        print "up"
         return "up"
 
-    print "down"
     return "down"
 
 
@@ -529,16 +607,7 @@ class AStar(object):
                         heapq.heappush(self.opened, (adj_cell.f, adj_cell))
 
 
-
-# def get_danger_level(data, point):
-
-
-
-
-
-
-
 # Expose WSGI app (so gunicorn can find it)
 application = bottle.default_app()
 if __name__ == '__main__':
-    bottle.run(application, host=os.getenv('IP', '0.0.0.0'), port=os.getenv('PORT', '8080'))
+    bottle.run(application, host=os.getenv('IP', '0.0.0.0'), port=os.getenv('PORT', '8000'))
