@@ -133,7 +133,7 @@ def get_possible_moves_from_flood(data):
             final_moves.append(move["direction"])
 
     # If all moves are smaller than our body, return the biggest one
-    if len(final_moves) is 0:
+    if len(final_moves) is 0 and len(possible_moves) > 0:
         sorted_possible_moves = sorted(possible_moves, key=lambda move: move["count"], reverse=True)
         final_moves.append(sorted_possible_moves[0]["direction"])
 
