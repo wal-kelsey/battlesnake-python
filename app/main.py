@@ -128,7 +128,8 @@ def get_possible_moves_from_flood(data):
     grootLength = len(groot["body"]["data"])
     final_moves = []
     for move in possible_moves:
-        if (move["count"] > grootLength):
+        dangerousLength = grootLength * 1.5
+        if (move["count"] > dangerousLength):
             final_moves.append(move["direction"])
 
     # If all moves are smaller than our body, return the biggest one
@@ -282,7 +283,7 @@ def default(data, flood_fill_moves):
     # Add danger to moves not returned by flood fill
     for value in values:
         if value[1] not in flood_fill_moves:
-            value[0] += 10
+            value[0] += 20
 
     sorted_by_first = sorted(values, key=lambda value: value[0])
 
