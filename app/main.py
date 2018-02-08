@@ -59,7 +59,6 @@ def move():
             if x != (data["width"]-2) and map[y][x+2] == 0:
                 move = 'right'
 
-
         #Just find a move
         if (move == None):
             if y != 0 and map[y-1][x] == 0:
@@ -85,17 +84,17 @@ def move():
 
 def get_move(data):
     groot = get_groot(data)
-
     moves = get_possible_moves_from_flood(data)
-    print(moves)
 
     if groot["health"] < 60:
         return hungry(data, moves)
     else:
         return default(data, moves)
 
+
 def get_groot(data):
     return data["you"]
+
 
 def get_possible_moves_from_flood(data):
     map = make_flood_map(data)
@@ -140,9 +139,6 @@ def get_possible_moves_from_flood(data):
     return final_moves
 
 
-
-
-
 def flood_fill(map, x, y, filled):
     if map[y][x] == 0:
         # Mark as visited
@@ -159,6 +155,7 @@ def flood_fill(map, x, y, filled):
         if y < len(map) - 1:
             flood_fill(map, x, y + 1, filled)
 
+
 def get_move_coordinates(head, move):
     x = head["x"]
     y = head["y"]
@@ -173,6 +170,7 @@ def get_move_coordinates(head, move):
         return {'x': x, 'y': y + 1}
 
     print("Invalid move passed in to get_move_coordinates")
+
 
 def make_flood_map(data):
     wall_coords = []
@@ -274,9 +272,6 @@ def default(data, flood_fill_moves):
                 if map[ytemp][xtemp] != 0:
                     dangersDown += map[ytemp][xtemp]
 
-
-    move = None
-
     upList = [dangersUp, 'up']
     downList = [dangersDown, 'down']
     leftList = [dangersLeft, 'left']
@@ -290,7 +285,6 @@ def default(data, flood_fill_moves):
             value[0] += 10
 
     sorted_by_first = sorted(values, key=lambda value: value[0])
-    print(sorted_by_first)
 
     for option in sorted_by_first:
         if option[1] == 'up':
@@ -334,10 +328,7 @@ def default(data, flood_fill_moves):
     return None
 
 
-
-
 def hungry(data, flood_fill_moves):
-
     groot = get_groot(data)
     map = make_map(data, True)
     if not len(data["food"]["data"]):
@@ -353,6 +344,7 @@ def hungry(data, flood_fill_moves):
         return move
     else:
         return default(data, flood_fill_moves)
+
 
 def food_eval(map, data_food, our_head):
         food_distance = []
@@ -420,8 +412,6 @@ def make_map(data, excludeFood):
     return map
 
 
-
-
 def get_astar_move(start, goal, data):
     start = (start["x"], start["y"])
     goal = (goal["x"], goal["y"])
@@ -449,7 +439,6 @@ def get_astar_move(start, goal, data):
     return None
 
 
-
 def convert_direction(start, coord):
 
     if start[0] > coord[0]:
@@ -461,9 +450,6 @@ def convert_direction(start, coord):
         return "up"
 
     return "down"
-
-
-
 
 
 '''
@@ -489,7 +475,6 @@ class Cell(object):
         self.g = 0
         self.h = 0
         self.f = 0
-
 
 
 class AStar(object):
