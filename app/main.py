@@ -221,22 +221,22 @@ def default(data, flood_fill_moves):
         yfirstBody = firstBody["y"]
         
         
-        if (y - 1 == yfirstBody) or (y == 0) :
+        if ('up' not in flood_fill_moves) or (y - 1 == yfirstBody) or (y == 0) :
             #Do not move up
             #dangersUp = 100
             dangersUp = True
 
-        if (y + 1 == yfirstBody) or (y == data["height"] - 1):
+        if ('down' not in flood_fill_moves) or (y + 1 == yfirstBody) or (y == data["height"] - 1):
             #Do not move down
             #dangersDown = 100
             dangersDown = True
 
-        if (x - 1 == xfirstBody) or (x == 0):
+        if ('left' not in flood_fill_moves) or (x - 1 == xfirstBody) or (x == 0):
             #Do not move left
             #dangersLeft = 100
             dangersLeft = True
 
-        if (x + 1 == xfirstBody) or (x == data["width"] - 1):
+        if ('right' not in flood_fill_moves) or (x + 1 == xfirstBody) or (x == data["width"] - 1):
             #Do not move right
             #dangersRight = 100
             dangersRight = True
@@ -368,12 +368,12 @@ def make_map(data, excludeFood):
         map[y][x] += 1
 
     # Make edge scary
-    for y in range(data["height"]):
-        for x in range(data["width"]):
-            if x == 0 or x == (data["width"]-1):
-                map[y][x] += 0.5
-            if y == 0 or y == (data["height"]-1):
-                map[y][x] += 0.5
+    #for y in range(data["height"]):
+       # for x in range(data["width"]):
+         #   if x == 0 or x == (data["width"]-1):
+         #       map[y][x] += 0.5
+          #  if y == 0 or y == (data["height"]-1):
+         #       map[y][x] += 0.5
 
     return map
 
