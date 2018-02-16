@@ -86,7 +86,12 @@ def get_move(data):
     groot = get_groot(data)
     moves = get_possible_moves_from_flood(data)
 
-    return default(data, moves)
+    #Here would be a good place to use conditionals for our move behaviour
+
+    if groot["health"] < 60:
+        return hungry(data, moves)
+    else:
+        return default(data, moves)
 
 
 def get_groot(data):
@@ -199,82 +204,113 @@ def default(data, flood_fill_moves):
 
     x = head["x"]
     y = head["y"]
-    
-    dangersLeft = 0
-    dangersRight = 0
-    dangersUp = 0
-    dangersDown = 0
+
+    #dangersLeft = 0
+    #dangersRight = 0
+    #dangersUp = 0
+    #dangersDown = 0
+
+    dangersLeft = False
+    dangersRight = False
+    dangersUp = False
+    dangersDown = False
 
     if (len(groot["body"]["data"]) > 1):
         firstBody = groot["body"]["data"][1]
         xfirstBody = firstBody["x"]
         yfirstBody = firstBody["y"]
         
-        if y - 1 == yfirstBody:
-            dangersUp = 100
+        
+        if (y - 1 == yfirstBody) or (y == 0) :
+            #Do not move up
+            #dangersUp = 100
+            dangersUp = True
 
-        if y + 1 == yfirstBody:
-            dangersDown = 100
+        if (y + 1 == yfirstBody) or (y == data["height"] - 1):
+            #Do not move down
+            #dangersDown = 100
+            dangersDown = True
 
-        if x - 1 == xfirstBody:
-            dangersLeft = 100
+        if (x - 1 == xfirstBody) or (x == 0):
+            #Do not move left
+            #dangersLeft = 100
+            dangersLeft = True
 
-        if x + 1 == xfirstBody:
-            dangersRight = 100
+        if (x + 1 == xfirstBody) or (x == data["width"] - 1):
+            #Do not move right
+            #dangersRight = 100
+            dangersRight = True
 
     xtemp = x
     ytemp = y
 
-    upList = [dangersUp, 'up']
-    downList = [dangersDown, 'down']
-    leftList = [dangersLeft, 'left']
-    rightList = [dangersRight, 'right']
+    #upList = [dangersUp, 'up']
+    #downList = [dangersDown, 'down']
+    #leftList = [dangersLeft, 'left']
+    #rightList = [dangersRight, 'right']
 
-    values = [upList, downList, leftList, rightList]
+    #values = [upList, downList, leftList, rightList]
 
-    sorted_by_first = sorted(values, key=lambda value: value[0])
+    #sorted_by_first = sorted(values, key=lambda value: value[0])
 
-    for option in sorted_by_first:
-        if option[1] == 'up':
-            if y == 0:
-                continue
+    #for option in sorted_by_first:
+    if dangersUp == False:
+            #if y == 0:
+                #continue
 
             # ytemp = y - 1
             # if (map[ytemp][x] >= 2):
             #     continue
-            return 'up'
+        return 'up'
 
-        if option[1] == 'down':
-            if y == data["height"] - 1:
-                continue
+    if dangersDown == False:
+            #if y == data["height"] - 1:
+                #continue
 
             # ytemp = y + 1
             # if (map[ytemp][x] >= 2):
             #     continue
-            return 'down'
+        return 'down'
 
-        if option[1] == 'left':
-            if x == 0:
-                continue
+    if dangersLeft == False:
+            #if x == 0:
+                #continue
 
             # xtemp = x - 1
             # if (map[y][xtemp] >= 2):
             #     continue
-            return 'left'
+        return 'left'
 
-        if option[1] == 'right':
-            if x == data["width"] - 1:
-                continue
+    if dangersRight == False:
+            #if x == data["width"] - 1:
+                #continue
 
             # xtemp = x + 1
             # if (map[y][xtemp] >= 2):
             #     continue
-            return 'right'
+        return 'right'
 
 
-    print("IF WE GET HERE, THIS IS BADDDD")
-    return None
+    #print("IF WE GET HERE, THIS IS BADDDD")
+    #return None
 
+
+def hungry(data, flood_fill_moves):
+    groot = get_groot(data)
+    map = make_map(data, True)
+    if not len(data["food"]["data"]):
+        return default(data, flood_fill_moves)
+
+    food = food_eval(map, data["food"]["data"], groot["body"]["data"][0])
+    if not len(food):
+        return default(data, flood_fill_moves)
+
+    move = get_astar_move(groot["body"]["data"][0], food[1], data)
+
+    if move in flood_fill_moves:
+        return move
+    else:
+        return default(data, flood_fill_moves)
 
 def food_eval(map, data_food, our_head):
         food_distance = []
