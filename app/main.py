@@ -32,46 +32,46 @@ def move():
 
     move = get_move(data)
 
-    #Emergency move if move is None
-    if (move is None):
-        print("MOVE IS NONE!!!!!!!!!")
-        map = make_map(data, True)
-        groot = get_groot(data)
-        head = groot["body"]["data"][0]
+    # #Emergency move if move is None
+    # if (move is None):
+    #     print("MOVE IS NONE!!!!!!!!!")
+    #     map = make_map(data, True)
+    #     groot = get_groot(data)
+    #     head = groot["body"]["data"][0]
 
-        x = head["x"]
-        y = head["y"]
+    #     x = head["x"]
+    #     y = head["y"]
 
-        #Try and find safe move
-        if y != 0 and map[y-1][x] == 0:
-            if y != 1 and map[y-2][x] == 0:
-                move = 'up'
+    #     #Try and find safe move
+    #     if y != 0 and map[y-1][x] == 0:
+    #         if y != 1 and map[y-2][x] == 0:
+    #             move = 'up'
 
-        if y != (data["height"]-1) and map[y+1][x] == 0:
-            if y != (data["height"]-2) and map[y+2][x] == 0:
-                move = 'down'
+    #     if y != (data["height"]-1) and map[y+1][x] == 0:
+    #         if y != (data["height"]-2) and map[y+2][x] == 0:
+    #             move = 'down'
 
-        if x != 0 and map[y][x-1] == 0:
-            if x != 1 and map[y][x-2] == 0:
-                move = 'left'
+    #     if x != 0 and map[y][x-1] == 0:
+    #         if x != 1 and map[y][x-2] == 0:
+    #             move = 'left'
 
-        if x != (data["width"]-1) and map[y][x+1] == 0:
-            if x != (data["width"]-2) and map[y][x+2] == 0:
-                move = 'right'
+    #     if x != (data["width"]-1) and map[y][x+1] == 0:
+    #         if x != (data["width"]-2) and map[y][x+2] == 0:
+    #             move = 'right'
 
-        #Just find a move
-        if (move == None):
-            if y != 0 and map[y-1][x] == 0:
-                move = 'up'
+    #     #Just find a move
+    #     if (move == None):
+    #         if y != 0 and map[y-1][x] == 0:
+    #             move = 'up'
 
-            if y != (data["height"]-1) and map[y+1][x] == 0:
-                move = 'down'
+    #         if y != (data["height"]-1) and map[y+1][x] == 0:
+    #             move = 'down'
 
-            if x != 0 and map[y][x-1] == 0:
-                move = 'left'
+    #         if x != 0 and map[y][x-1] == 0:
+    #             move = 'left'
 
-            if x != (data["width"]-1) and map[y][x+1] == 0:
-                move = 'right'
+    #         if x != (data["width"]-1) and map[y][x+1] == 0:
+    #             move = 'right'
 
     taunt = 'I am Gro'
     for x in range(data['turn'] % 8):
@@ -86,10 +86,7 @@ def get_move(data):
     groot = get_groot(data)
     moves = get_possible_moves_from_flood(data)
 
-    if groot["health"] < 60:
-        return hungry(data, moves)
-    else:
-        return default(data, moves)
+    return default(data, moves)
 
 
 def get_groot(data):
@@ -228,62 +225,12 @@ def default(data, flood_fill_moves):
     xtemp = x
     ytemp = y
 
-
-    for i in range(1, 4):
-        for j in range(-1, 2):
-            xtemp = x - i
-            ytemp = y - j
-
-            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersLeft += 0.5
-            else:
-                if map[ytemp][xtemp] != 0:
-                    dangersLeft += map[ytemp][xtemp]
-
-    for i in range(1, 4):
-        for j in range(-1, 2):
-            xtemp = x + i
-            ytemp = y - j
-
-            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersRight += 0.5
-            else:
-                if map[ytemp][xtemp] != 0:
-                    dangersRight += map[ytemp][xtemp]
-
-    for i in range(-1, 2):
-        for j in range(1, 4):
-            xtemp = x - i
-            ytemp = y - j
-
-            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersUp += 0.5
-            else:
-                if map[ytemp][xtemp] != 0:
-                    dangersUp += map[ytemp][xtemp]
-
-    for i in range(-1, 2):
-        for j in range(1, 4):
-            xtemp = x - i
-            ytemp = y + j
-
-            if xtemp < 0 or xtemp > data["width"]-1 or ytemp < 0 or ytemp > data["height"]-1:
-                dangersDown += 0.5
-            else:
-                if map[ytemp][xtemp] != 0:
-                    dangersDown += map[ytemp][xtemp]
-
     upList = [dangersUp, 'up']
     downList = [dangersDown, 'down']
     leftList = [dangersLeft, 'left']
     rightList = [dangersRight, 'right']
 
     values = [upList, downList, leftList, rightList]
-
-    # Add danger to moves not returned by flood fill
-    for value in values:
-        if value[1] not in flood_fill_moves:
-            value[0] += 20
 
     sorted_by_first = sorted(values, key=lambda value: value[0])
 
@@ -327,24 +274,6 @@ def default(data, flood_fill_moves):
 
     print("IF WE GET HERE, THIS IS BADDDD")
     return None
-
-
-def hungry(data, flood_fill_moves):
-    groot = get_groot(data)
-    map = make_map(data, True)
-    if not len(data["food"]["data"]):
-        return default(data, flood_fill_moves)
-
-    food = food_eval(map, data["food"]["data"], groot["body"]["data"][0])
-    if not len(food):
-        return default(data, flood_fill_moves)
-
-    move = get_astar_move(groot["body"]["data"][0], food[1], data)
-
-    if move in flood_fill_moves:
-        return move
-    else:
-        return default(data, flood_fill_moves)
 
 
 def food_eval(map, data_food, our_head):
