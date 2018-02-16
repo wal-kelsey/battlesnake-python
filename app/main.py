@@ -3,6 +3,7 @@ import os
 import random
 import heapq
 import copy
+import random
 
 @bottle.route('/static/<path:path>')
 def static(path):
@@ -32,47 +33,6 @@ def move():
 
     move = get_move(data)
 
-    # #Emergency move if move is None
-    # if (move is None):
-    #     print("MOVE IS NONE!!!!!!!!!")
-    #     map = make_map(data, True)
-    #     groot = get_groot(data)
-    #     head = groot["body"]["data"][0]
-
-    #     x = head["x"]
-    #     y = head["y"]
-
-    #     #Try and find safe move
-    #     if y != 0 and map[y-1][x] == 0:
-    #         if y != 1 and map[y-2][x] == 0:
-    #             move = 'up'
-
-    #     if y != (data["height"]-1) and map[y+1][x] == 0:
-    #         if y != (data["height"]-2) and map[y+2][x] == 0:
-    #             move = 'down'
-
-    #     if x != 0 and map[y][x-1] == 0:
-    #         if x != 1 and map[y][x-2] == 0:
-    #             move = 'left'
-
-    #     if x != (data["width"]-1) and map[y][x+1] == 0:
-    #         if x != (data["width"]-2) and map[y][x+2] == 0:
-    #             move = 'right'
-
-    #     #Just find a move
-    #     if (move == None):
-    #         if y != 0 and map[y-1][x] == 0:
-    #             move = 'up'
-
-    #         if y != (data["height"]-1) and map[y+1][x] == 0:
-    #             move = 'down'
-
-    #         if x != 0 and map[y][x-1] == 0:
-    #             move = 'left'
-
-    #         if x != (data["width"]-1) and map[y][x+1] == 0:
-    #             move = 'right'
-
     taunt = 'I am Gro'
     for x in range(data['turn'] % 8):
         taunt += 'o'
@@ -87,6 +47,7 @@ def get_move(data):
     moves = get_possible_moves_from_flood(data)
 
     #Here would be a good place to use conditionals for our move behaviour
+    #Plot out new states
 
     if groot["health"] < 60:
         return hungry(data, moves)
@@ -205,11 +166,6 @@ def default(data, flood_fill_moves):
     x = head["x"]
     y = head["y"]
 
-    #dangersLeft = 0
-    #dangersRight = 0
-    #dangersUp = 0
-    #dangersDown = 0
-
     dangersLeft = False
     dangersRight = False
     dangersUp = False
@@ -220,79 +176,65 @@ def default(data, flood_fill_moves):
         xfirstBody = firstBody["x"]
         yfirstBody = firstBody["y"]
         
-        
+        #Do not move where flood fill map found to be dangerous, where my body is, where walls are
         if ('up' not in flood_fill_moves) or (y - 1 == yfirstBody) or (y == 0) :
             #Do not move up
-            #dangersUp = 100
             dangersUp = True
-
         if ('down' not in flood_fill_moves) or (y + 1 == yfirstBody) or (y == data["height"] - 1):
             #Do not move down
-            #dangersDown = 100
             dangersDown = True
-
         if ('left' not in flood_fill_moves) or (x - 1 == xfirstBody) or (x == 0):
             #Do not move left
-            #dangersLeft = 100
             dangersLeft = True
-
         if ('right' not in flood_fill_moves) or (x + 1 == xfirstBody) or (x == data["width"] - 1):
             #Do not move right
-            #dangersRight = 100
             dangersRight = True
 
     xtemp = x
     ytemp = y
 
-    #upList = [dangersUp, 'up']
-    #downList = [dangersDown, 'down']
-    #leftList = [dangersLeft, 'left']
-    #rightList = [dangersRight, 'right']
-
-    #values = [upList, downList, leftList, rightList]
-
-    #sorted_by_first = sorted(values, key=lambda value: value[0])
-
-    #for option in sorted_by_first:
-    if dangersUp == False:
-            #if y == 0:
-                #continue
-
-            # ytemp = y - 1
-            # if (map[ytemp][x] >= 2):
-            #     continue
-        return 'up'
-
-    if dangersDown == False:
-            #if y == data["height"] - 1:
-                #continue
-
-            # ytemp = y + 1
-            # if (map[ytemp][x] >= 2):
-            #     continue
-        return 'down'
-
-    if dangersLeft == False:
-            #if x == 0:
-                #continue
-
-            # xtemp = x - 1
-            # if (map[y][xtemp] >= 2):
-            #     continue
-        return 'left'
-
-    if dangersRight == False:
-            #if x == data["width"] - 1:
-                #continue
-
-            # xtemp = x + 1
-            # if (map[y][xtemp] >= 2):
-            #     continue
-        return 'right'
-
-
-    #print("IF WE GET HERE, THIS IS BADDDD")
-    #return None
+    #Shuffle the order in which we go through commands
+    randomSeed = random.randint(1,4)
+    
+    if randomSeed == 1:
+        if dangersUp == False:
+            return 'up'
+        if dangersDown == False:
+            return 'down'
+        if dangersLeft == False:
+            return 'left'
+        if dangersRight == False:
+            return 'right'
+    elif randomSeed == 2:
+        if dangersDown == False:
+            return 'down'
+        if dangersLeft == False:
+            return 'left'
+        if dangersRight == False:
+            return 'right'
+        if dangersUp == False:
+            return 'up'
+    elif randomSeed == 3:
+        if dangersLeft == False:
+            return 'left'
+        if dangersRight == False:
+            return 'right'
+        if dangersUp == False:
+            return 'up'
+        if dangersDown == False:
+            return 'down'
+    elif randomSeed == 4:
+        if dangersRight == False:
+            return 'right'
+        if dangersUp == False:
+            return 'up'
+        if dangersDown == False:
+            return 'down'
+        if dangersLeft == False:
+            return 'left'
+    else:
+        print("BAD KELSEY")
+    #If we get here, we have gotten ourselves into a pickle
 
 
 def hungry(data, flood_fill_moves):
@@ -366,15 +308,6 @@ def make_map(data, excludeFood):
         y = wall["y"]
 
         map[y][x] += 1
-
-    # Make edge scary
-    #for y in range(data["height"]):
-       # for x in range(data["width"]):
-         #   if x == 0 or x == (data["width"]-1):
-         #       map[y][x] += 0.5
-          #  if y == 0 or y == (data["height"]-1):
-         #       map[y][x] += 0.5
-
     return map
 
 
