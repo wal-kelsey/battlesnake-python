@@ -49,7 +49,7 @@ def get_move(data):
     #Here would be a good place to use conditionals for our move behaviour
     #Plot out new states
 
-    if groot["health"] < 60:
+    if groot["health"] < 65:
         return hungry(data, moves)
     else:
         return default(data, moves)
@@ -269,6 +269,9 @@ def get_distance(our_head, food_coords):
 
 
 def make_map(data, excludeFood):
+    #print(data)
+    #print(data.get("snakes")
+
     wall_coords = []
     map = []
 
@@ -282,26 +285,51 @@ def make_map(data, excludeFood):
     for snake in data["snakes"]["data"]:
         head_counter = 0
         if snake["id"] == data["you"]["id"]:
+            myLength = snake["body"]["data"][0].get(u'length');
             for body in snake["body"]["data"][1:]:
                 wall_coords.append(body)
         else:
             for body in snake["body"]["data"]:
                 if (head_counter == 0):
+                    #print(wall_coords)
                     wall_coords.append(body)
                     wall_coords.append(body)
                     wall_coords.append(body)
                 wall_coords.append(body)
+    for snake in data["snakes"]["data"]:
+	#print(data["snakes"]["data"]);
+	#print(snake["body"]["data"][0].get(u'x'));
+	#{u'y': 6, u'x': 7, u'object': u'point'}
 
+        # Make snake heads dangerous if they are longer than me
+	if snake["body"]["data"][0].get(u'y') + 1 < data["height"] and snake["body"]["data"][0].get(u'length') >= myLength:
+	    tempY = snake["body"]["data"][0].get(u'y') + 1
+	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') + 1
+                wall_coords.append({u'y': tempY, u'x': tempX, u'object': u'point'})
+	    if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') - 1
+                wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+	if (snake["body"]["data"][0].get(u'y') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
+            tempY = snake["body"]["data"][0].get(u'y') - 1
+	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') + 1
+                wall_coords.append({u'y': tempY, u'x': tempX, u'object': u'point'})
+	    if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') - 1
+                wall_coords.append({u'y': tempY, u'x': tempX, u'object': u'point'})
+            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+	    #print(wall_coords)
 
     for wall in wall_coords:
         x = wall["x"]
         y = wall["y"]
-
         map[y][x] = 1
     
-    if (not excludeFood):
-        for food in data["food"]["data"]:
-            wall_coords.append(food)
+    #if (not excludeFood):
+        #for food in data["food"]["data"]:
+            #wall_coords.append(food)
 
     for wall in wall_coords:
         x = wall["x"]
