@@ -49,7 +49,7 @@ def get_move(data):
     #Here would be a good place to use conditionals for our move behaviour
     #Plot out new states
 
-    if groot["health"] < 65:
+    if groot["health"] < 60:
         return hungry(data, moves)
     else:
         return default(data, moves)
@@ -159,6 +159,21 @@ def make_flood_map(data):
 
 
 def default(data, flood_fill_moves):
+    
+    #Acquire a fear of death
+    dangersUp, dangersDown, dangersLeft, dangersRight = fear(data,flood_fill_moves)
+
+    #Shuffle the order in which we go through commands
+    directions = ["up","down","left","right"]
+    random.shuffle(directions)
+    
+    for direction in directions:
+        if (moveOK(dangersUp, dangersDown, dangersLeft, dangersRight,direction)):
+            return direction
+    #if we get here we are already dead
+    return directions[0]
+
+def fear(data, flood_fill_moves):
     map = make_map(data, False)
     groot = get_groot(data)
     head = groot["body"]["data"][0]
@@ -190,53 +205,34 @@ def default(data, flood_fill_moves):
             #Do not move right
             dangersRight = True
 
-    xtemp = x
-    ytemp = y
+    return dangersUp, dangersDown, dangersLeft, dangersRight
 
-    #Shuffle the order in which we go through commands
-    randomSeed = random.randint(1,4)
-    
-    if randomSeed == 1:
-        if dangersUp == False:
-            return 'up'
-        if dangersDown == False:
-            return 'down'
-        if dangersLeft == False:
-            return 'left'
-        if dangersRight == False:
-            return 'right'
-    elif randomSeed == 2:
-        if dangersDown == False:
-            return 'down'
-        if dangersLeft == False:
-            return 'left'
-        if dangersRight == False:
-            return 'right'
-        if dangersUp == False:
-            return 'up'
-    elif randomSeed == 3:
-        if dangersLeft == False:
-            return 'left'
-        if dangersRight == False:
-            return 'right'
-        if dangersUp == False:
-            return 'up'
-        if dangersDown == False:
-            return 'down'
-    elif randomSeed == 4:
-        if dangersRight == False:
-            return 'right'
-        if dangersUp == False:
-            return 'up'
-        if dangersDown == False:
-            return 'down'
-        if dangersLeft == False:
-            return 'left'
+def moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, direction):
+    if (direction == 'up'):
+        if (dangersUp):
+            return False
+        else:
+            return True
+    elif (direction == 'down'):
+        if (dangersDown):
+            return False
+        else:
+            return True
+    elif (direction == 'left'):
+        if (dangersLeft):
+            return False
+        else:
+            return True
+    elif (direction == 'right'):
+        if (dangersRight):
+            return False
+        else:
+            return True
     else:
-        print("BAD KELSEY")
-    #If we get here, we have gotten ourselves into a pickle
+        print "this move is probably not ok"
+        return False
 
-
+ 
 def hungry(data, flood_fill_moves):
     groot = get_groot(data)
     map = make_map(data, True)
@@ -254,6 +250,7 @@ def hungry(data, flood_fill_moves):
     else:
         return default(data, flood_fill_moves)
 
+
 def food_eval(map, data_food, our_head):
         food_distance = []
         for food in data_food:
@@ -269,9 +266,6 @@ def get_distance(our_head, food_coords):
 
 
 def make_map(data, excludeFood):
-    #print(data)
-    #print(data.get("snakes")
-
     wall_coords = []
     map = []
 
@@ -285,51 +279,26 @@ def make_map(data, excludeFood):
     for snake in data["snakes"]["data"]:
         head_counter = 0
         if snake["id"] == data["you"]["id"]:
-            myLength = snake["body"]["data"][0].get(u'length');
             for body in snake["body"]["data"][1:]:
                 wall_coords.append(body)
         else:
             for body in snake["body"]["data"]:
                 if (head_counter == 0):
-                    #print(wall_coords)
                     wall_coords.append(body)
                     wall_coords.append(body)
                     wall_coords.append(body)
                 wall_coords.append(body)
 
-	#print(data["snakes"]["data"]);
-	#print(snake["body"]["data"][0].get(u'x'));
-	#{u'y': 6, u'x': 7, u'object': u'point'}
-    for snake in data["snakes"]["data"]:
-        # Make snake heads dangerous if they are longer than me
-	if snake["body"]["data"][0].get(u'y') + 1 < data["height"] and snake["body"]["data"][0].get(u'length') >= myLength and snake["id"] != data["you"]["id"]:
-	    tempY = snake["body"]["data"][0].get(u'y') + 1
-	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
-	        tempX = snake["body"]["data"][0].get(u'x') + 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
-	    if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
-	        tempX = snake["body"]["data"][0].get(u'x') - 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
-            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
-	if (snake["body"]["data"][0].get(u'y') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength and snake["id"] != data["you"]["id"]:
-            tempY = snake["body"]["data"][0].get(u'y') - 1
-	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
-	        tempX = snake["body"]["data"][0].get(u'x') + 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
-	    if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
-	        tempX = snake["body"]["data"][0].get(u'x') - 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
-            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
-	    #print(wall_coords)
 
     for wall in wall_coords:
         x = wall["x"]
         y = wall["y"]
+
         map[y][x] = 1
     
-    #if (not excludeFood):
-        #for food in data["food"]["data"]:
-            #wall_coords.append(food)
+    if (not excludeFood):
+        for food in data["food"]["data"]:
+            wall_coords.append(food)
 
     for wall in wall_coords:
         x = wall["x"]
