@@ -152,6 +152,32 @@ def make_flood_map(data):
         for body in snake["body"]["data"][:-1]:
             wall_coords.append(body)
 
+    for snake in data["snakes"]["data"]:
+        # Make snake heads dangerous if they are longer than me
+        if snake["id"] == data["you"]["id"]:
+            myLength = snake["body"]["data"][0].get(u'length');
+
+    for snake in data["snakes"]["data"]:
+	if snake["body"]["data"][0].get(u'y') + 1 < data["height"] and snake["body"]["data"][0].get(u'length') >= myLength and snake["id"] != data["you"]["id"]:
+	    tempY = snake["body"]["data"][0].get(u'y') + 1
+	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') + 1
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
+            if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
+                tempX = snake["body"]["data"][0].get(u'x') - 1
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+	if (snake["body"]["data"][0].get(u'y') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength and snake["id"] != data["you"]["id"]:
+            tempY = snake["body"]["data"][0].get(u'y') - 1
+	    if (snake["body"]["data"][0].get(u'x') + 1) < data["width"] and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') + 1
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
+	    if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["body"]["data"][0].get(u'length') >= myLength:
+	        tempX = snake["body"]["data"][0].get(u'x') - 1
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
+            wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+	    #print(wall_coords)
+
     for wall in wall_coords:
         map[wall["y"]][wall["x"]] = 1
 
