@@ -71,7 +71,8 @@ def make_extra_dangerous_flood_map(data, map):
             tempY = snake["body"]["data"][0].get(u'y')
             extra_dangerous_flood_map[tempX][tempY] = 1
 	if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["id"] != data["you"]["id"]:	
-	    tempX = snake["body"]["data"][0].get(u'x') - 1	
+	    tempX = snake["body"]["data"][0].get(u'x') - 1
+            tempY = snake["body"]["data"][0].get(u'y')	
             extra_dangerous_flood_map[tempX][tempY] = 1
 	if snake["body"]["data"][0].get(u'y') - 1 >= 0 and snake["id"] != data["you"]["id"]:	
 	    tempY = snake["body"]["data"][0].get(u'y') - 1
@@ -88,7 +89,8 @@ def make_extra_dangerous_flood_map(data, map):
             tempY = snake["body"]["data"][0].get(u'y')
             extra_dangerous_flood_map[tempX][tempY] = 1
 	if (snake["body"]["data"][0].get(u'x') - 2) >= 0 and snake["id"] != data["you"]["id"]:	
-	    tempX = snake["body"]["data"][0].get(u'x') - 2	
+	    tempX = snake["body"]["data"][0].get(u'x') - 2
+            tempY = snake["body"]["data"][0].get(u'y')	
             extra_dangerous_flood_map[tempX][tempY] = 1
 	if snake["body"]["data"][0].get(u'y') - 2 >= 0 and snake["id"] != data["you"]["id"]:	
 	    tempY = snake["body"]["data"][0].get(u'y') - 2
@@ -112,6 +114,7 @@ def make_dangerous_flood_map(data, map):
             dangerous_flood_map[tempX][tempY] = 1
 	if (snake["body"]["data"][0].get(u'x') - 1) >= 0 and snake["id"] != data["you"]["id"]:	
 	    tempX = snake["body"]["data"][0].get(u'x') - 1	
+            tempY = snake["body"]["data"][0].get(u'y')
             dangerous_flood_map[tempX][tempY] = 1
 	if snake["body"]["data"][0].get(u'y') - 1 >= 0 and snake["id"] != data["you"]["id"]:	
 	    tempY = snake["body"]["data"][0].get(u'y') - 1
@@ -170,7 +173,7 @@ def get_possible_moves_from_flood(data):
     grootLength = len(groot["body"]["data"])
     final_moves = []
     for move in possible_moves:
-        dangerousLength = grootLength * 1.5
+        dangerousLength = grootLength
         if (move["count"] > dangerousLength):
             final_moves.append(move["direction"])
 
