@@ -53,9 +53,9 @@ def get_move(data):
 
     if groot["health"] < 60:
         return hungry(data, moves)
-    # elif confidence(data) > 0:
-    #     print("Just like Columbus he get murderous on purpose")
-    #     return kill(data, moves)
+    elif confidence(data) > 0:
+        print("Just like Columbus he get murderous on purpose")
+        return kill(data, moves)
     else:
         return default(data, moves)
 
@@ -300,19 +300,26 @@ def kill(data, flood_fill_moves):
     if not len(enemy):
         return default(data, flood_fill_moves)
 
+    # print ("enemy")
+    # print enemy
+
     targets = [{u'y': enemy[1]["y"]+1, u'x': enemy[1]["x"], u'object': u'point'},
                 {u'y': enemy[1]["y"]-1, u'x': enemy[1]["x"], u'object': u'point'},
                 {u'y': enemy[1]["y"], u'x': enemy[1]["x"]+1, u'object': u'point'},
                 {u'y': enemy[1]["y"], u'x': enemy[1]["x"]-1, u'object': u'point'}]
 
+    # print targets
+
     random.shuffle(targets)
 
     for target in targets:
-        move = get_astar_move(groot["body"]["data"][0], target, data)
-
-        if moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, move):
-            #print ("On the mission")
-            return move
+        if not (target.get('x') == groot["body"]["data"][0].get('x') and target.get('y') == groot["body"]["data"][0].get('y')):
+            if not ((target.get('y') < 0) or (target.get('y') >= data["height"]) or (target.get('x') < 0) or (target.get('x') >= data["width"])):
+                # print target
+                move = get_astar_move(groot["body"]["data"][0], target, data)
+                if moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, move):
+                    #print ("On the mission")
+                    return move
     #print ("afraid")
     return default(data, flood_fill_moves)
 
@@ -409,6 +416,8 @@ def snake_eval(map, data, data_snakes, our_head):
         if snake["id"] != data["you"]["id"]:
             snake_distance.append(get_distance(our_head, snakeHead))
     sorted(snake_distance)
+    # print ("snake_distance")
+    # print snake_distance[0]
     return snake_distance[0]
 
 
@@ -477,7 +486,9 @@ def confidenceVS(data, snake):
     return lengthMe - lengthThem
 
 def get_astar_move(start, goal, data):
+    print("start")
     print start
+    print("goal")
     print goal
     start = (start["x"], start["y"])
     goal = (goal["x"], goal["y"])
