@@ -51,7 +51,7 @@ def get_move(data):
 
     #print(str(confidence(data)) + "\n")
 
-    if groot["health"] < 60:
+    if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0]) < 5:
         return hungry(data, moves)
     # elif confidence(data) > 0:
     #     print("Just like Columbus he get murderous on purpose")
@@ -65,7 +65,11 @@ def get_groot(data):
 
 def make_extra_dangerous_flood_map(data, map):
     extra_dangerous_flood_map = copy.deepcopy(map)
-    for snake in data["snakes"]["data"]:	
+    for snake in data["snakes"]["data"]:
+        if snake["id"] == data["you"]["id"]:
+            extra_dangerous_flood_map[snake["body"]["data"][0].get(u'y')][snake["body"]["data"][0].get(u'x')] = 2 #ME
+        else:
+            extra_dangerous_flood_map[snake["body"]["data"][0].get(u'y')][snake["body"]["data"][0].get(u'x')] = 3 #ENEMY
         # # Make flood map see safety where snakes cannot move in the next turn (don't get cut off by another snake)
     	if snake["body"]["data"][0].get(u'y') + 1 < data["height"] and snake["id"] != data["you"]["id"]:	
     	    tempY = snake["body"]["data"][0].get(u'y') + 1
@@ -103,13 +107,20 @@ def make_extra_dangerous_flood_map(data, map):
             extra_dangerous_flood_map[tempY][tempX] = 1
 
     # print(extra_dangerous_flood_map)
+    #if data["you"]["name"] == "groot":
+        #print("EXTRA Dangerous Floor Map")
+        #print(extra_dangerous_flood_map)
     return extra_dangerous_flood_map;
 
 def make_dangerous_flood_map(data, map):
     dangerous_flood_map = copy.deepcopy(map)
     # if data["you"]["name"] == "groot":
     #     print(dangerous_flood_map)
-    for snake in data["snakes"]["data"]:	
+    for snake in data["snakes"]["data"]:
+        if snake["id"] == data["you"]["id"]:
+            dangerous_flood_map[snake["body"]["data"][0].get(u'y')][snake["body"]["data"][0].get(u'x')] = 2 #ME
+        else:
+            dangerous_flood_map[snake["body"]["data"][0].get(u'y')][snake["body"]["data"][0].get(u'x')] = 3 #ENEMY	
         # # Make flood map see safety where snakes cannot move in the next turn (don't get cut off by another snake)
     	if (snake["body"]["data"][0].get(u'y')) + 1 < data["height"] and snake["id"] != data["you"]["id"]:	
             tempY = snake["body"]["data"][0].get(u'y') + 1
@@ -128,8 +139,9 @@ def make_dangerous_flood_map(data, map):
             tempX = snake["body"]["data"][0].get(u'x')
             dangerous_flood_map[tempY][tempX] = 1
 
-    # if data["you"]["name"] == "groot":
-    #     print(dangerous_flood_map)
+    #if data["you"]["name"] == "groot":
+        #print("Dangerous Floor Map")
+        #print(dangerous_flood_map)
     return dangerous_flood_map
 
 def get_possible_moves_from_flood(data):
@@ -246,7 +258,6 @@ def make_flood_map(data):
     grootLength = groot["body"]["data"][0].get(u'length')
     for snake in data["snakes"]["data"]:
         if snake["id"] != data["you"]["id"]:
-           # # Make flood map see safety where snakes cannot move in the next turn (don't get cut off by another snake)
     	#if snake["body"]["data"][0]
             if (snake["body"]["data"][0].get(u'x') - groot["body"]["data"][0].get(u'x') == 1) and confidenceVS(data,snake) > 1:
                 #dangersRight = True
