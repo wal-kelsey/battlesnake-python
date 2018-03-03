@@ -49,8 +49,13 @@ def get_move(data):
     #Here would be a good place to use conditionals for our move behaviour
     #Plot out new states
 
+    #print(str(confidence(data)) + "\n")
+
     if groot["health"] < 60:
         return hungry(data, moves)
+    elif confidence(data) > 0:
+        print("Just like Columbus he get murderous on purpose")
+        return kill(data, moves)
     else:
         return default(data, moves)
 
@@ -279,6 +284,34 @@ def default(data, flood_fill_moves):
     #if we get here we are already dead
     return directions[0]
 
+def kill(data, flood_fill_moves):
+
+    #Acquire a fear of death
+    dangersUp, dangersDown, dangersLeft, dangersRight = fear(data,flood_fill_moves)
+    groot = get_groot(data)
+    map = make_map(data, True)
+
+    enemy = snake_eval(map, data, data["snakes"]["data"], groot["body"]["data"][0])
+    if not len(enemy):
+        return default(data, flood_fill_moves)
+
+    targets = [{u'y': enemy[1]["y"]+1, u'x': enemy[1]["x"], u'object': u'point'},
+                {u'y': enemy[1]["y"]-1, u'x': enemy[1]["x"], u'object': u'point'},
+                {u'y': enemy[1]["y"], u'x': enemy[1]["x"]+1, u'object': u'point'},
+                {u'y': enemy[1]["y"], u'x': enemy[1]["x"]-1, u'object': u'point'}]
+
+    random.shuffle(targets)
+
+    for target in targets:
+        move = get_astar_move(groot["body"]["data"][0], target, data)
+
+        if moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, move):
+            #print ("On the mission")
+            return move
+    #print ("afraid")
+    return default(data, flood_fill_moves)
+
+
 def fear(data, flood_fill_moves):
     map = make_map(data, False)
     groot = get_groot(data)
@@ -335,7 +368,7 @@ def moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, direction):
         else:
             return True
     else:
-        print "this move is probably not ok"
+        print "this move is probably not ok: "
         return False
 
  
@@ -363,6 +396,15 @@ def food_eval(map, data_food, our_head):
             food_distance.append(get_distance(our_head, food))
         sorted(food_distance)
         return food_distance[0]
+
+def snake_eval(map, data, data_snakes, our_head):
+    snake_distance = []
+    for snake in data_snakes:
+        snakeHead = snake["body"]["data"][0]
+        if snake["id"] != data["you"]["id"]:
+            snake_distance.append(get_distance(our_head, snakeHead))
+    sorted(snake_distance)
+    return snake_distance[0]
 
 
 def get_distance(our_head, food_coords):
@@ -414,7 +456,21 @@ def make_map(data, excludeFood):
     return map
 
 
+def confidence(data):
+    lengthMe = len(get_groot(data)["body"]["data"])
+    maxDiff = 0
+    for snake in data["snakes"]["data"]:
+        if snake["id"] != data["you"]["id"]:
+            diff = lengthMe - len(snake["body"]["data"])
+            if maxDiff <  diff:
+                maxDiff = diff
+    return maxDiff
+
+
+
 def get_astar_move(start, goal, data):
+    print start
+    print goal
     start = (start["x"], start["y"])
     goal = (goal["x"], goal["y"])
     wall_coords     = []
