@@ -486,10 +486,10 @@ def confidenceVS(data, snake):
     return lengthMe - lengthThem
 
 def get_astar_move(start, goal, data):
-    print("start")
-    print start
-    print("goal")
-    print goal
+    # print("start")
+    # print start
+    # print("goal")
+    # print goal
     start = (start["x"], start["y"])
     goal = (goal["x"], goal["y"])
     wall_coords     = []
