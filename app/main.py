@@ -50,8 +50,11 @@ def get_move(data):
     #Plot out new states
 
     #print(str(confidence(data)) + "\n")
+    tastyDistance = min(data["width"]/4, data["height"]/4)
+    if tastyDistance < 2:
+        tastyFistance = 2
 
-    if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0]) < 5:
+    if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0])[0] < tastyDistance:
         return hungry(data, moves)
     elif confidence(data) > 0:
         print("Just like Columbus he get murderous on purpose")
