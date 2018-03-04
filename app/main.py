@@ -57,7 +57,7 @@ def get_move(data):
     if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0])[0] < tastyDistance:
         return hungry(data, moves)
     elif confidence(data) > 0:
-        print("Just like Columbus he get murderous on purpose")
+        # print("Just like Columbus he get murderous on purpose")
         return kill(data, moves)
     else:
         return default(data, moves)
@@ -155,7 +155,7 @@ def get_possible_moves_from_flood(data):
 
     x = head["x"]
     y = head["y"]
-    print map
+    # print map
 
     if y != 0 and map[y - 1][x] == 0:
         possible_moves.append({"direction": "up", "count": 0})
@@ -381,7 +381,7 @@ def moveOK(dangersUp, dangersDown, dangersLeft, dangersRight, direction):
         else:
             return True
     else:
-        print "this move is probably not ok: "
+        # print "this move is probably not ok: "
         return False
 
  
