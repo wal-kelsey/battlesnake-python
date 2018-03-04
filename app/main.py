@@ -54,7 +54,7 @@ def get_move(data):
     if tastyDistance < 2:
         tastyDistance = 2
 
-    print tastyDistance
+    # print tastyDistance
     if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0])[0] < tastyDistance:
         return hungry(data, moves)
     elif confidence(data) > 0:
