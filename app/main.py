@@ -50,9 +50,9 @@ def get_move(data):
     #Plot out new states
 
     #print(str(confidence(data)) + "\n")
-    tastyDistance = min(data["width"]/6, data["height"]/6)
+    tastyDistance = min(data["width"]/5, data["height"]/5)
     if tastyDistance < 2:
-        tastyFistance = 2
+        tastyDistance = 2
 
     if groot["health"] < 60 or food_eval(map, data["food"]["data"], groot["body"]["data"][0])[0] < tastyDistance:
         return hungry(data, moves)
