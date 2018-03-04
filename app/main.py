@@ -155,6 +155,7 @@ def get_possible_moves_from_flood(data):
 
     x = head["x"]
     y = head["y"]
+    print map
 
     if y != 0 and map[y - 1][x] == 0:
         possible_moves.append({"direction": "up", "count": 0})
@@ -261,30 +262,15 @@ def make_flood_map(data):
     grootLength = groot["body"]["data"][0].get(u'length')
     for snake in data["snakes"]["data"]:
         if snake["id"] != data["you"]["id"]:
-        #if snake["body"]["data"][0]
-            if (snake["body"]["data"][0].get(u'x') - groot["body"]["data"][0].get(u'x') == 1) and confidenceVS(data,snake) > 1:
-                #dangersRight = True
-                tempX = snake["body"]["data"][0].get(u'x') + 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
-
-            if (snake["body"]["data"][0].get(u'x') - groot["body"]["data"][0].get(u'x') == -1) and confidenceVS(data,snake) > 1:
-                #dangersLeft = True
-                tempX = snake["body"]["data"][0].get(u'x') - 1
-                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': tempX, u'object': u'point'})
-
-            if (snake["body"]["data"][0].get(u'y') - groot["body"]["data"][0].get(u'y') == 1) and confidenceVS(data,snake) > 1:
-                #dangersDown = True
-                tempY = snake["body"]["data"][0].get(u'x') - 1
-                wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'y'), u'object': u'point'})
-
-            if (snake["body"]["data"][0].get(u'y') - groot["body"]["data"][0].get(u'y') == -1) and confidenceVS(data,snake) > 1:
-                #dangersUp = True
-                tempY = snake["body"]["data"][0].get(u'x') + 1
-                wall_coords.append({u'y': tempY, u'x': snake["body"]["data"][0].get(u'y'), u'object': u'point'})
+            if confidenceVS(data,snake) <= 0:
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y') + 1, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y') - 1, u'x': snake["body"]["data"][0].get(u'x'), u'object': u'point'})
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': snake["body"]["data"][0].get(u'x') + 1, u'object': u'point'})
+                wall_coords.append({u'y': snake["body"]["data"][0].get(u'y'), u'x': snake["body"]["data"][0].get(u'x') - 1, u'object': u'point'})
 
     for wall in wall_coords:
         if not ((wall.get('y') < 0) or (wall.get('y') >= data["height"]) or (wall.get('x') < 0) or (wall.get('x') >= data["width"])):
-            map[wall["y"]][wall["x"]] = 1
+            map[wall["y"]][wall["x"]] = 8
 
     return map
 
