@@ -50,7 +50,7 @@ def get_move(data):
     #Plot out new states
 
     #print(str(confidence(data)) + "\n")
-    tastyDistance = min(data["width"]/4, data["height"]/4)
+    tastyDistance = min(data["width"]/6, data["height"]/6)
     if tastyDistance < 2:
         tastyFistance = 2
 
